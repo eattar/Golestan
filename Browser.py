@@ -31,15 +31,13 @@ class Browser:
             self.options.add_argument("--start-maximized")
 
     def run(self):
-        webdriver.Chrome(self.webdriver_path, options=self.options)
+        return webdriver.Chrome(self.webdriver_path, options=self.options)
 
 
 def main():
     visible_browser = Browser()
-    visible_browser.setup_browser(headless=True)
-    print(visible_browser.webdriver_path)
-    visible_browser.run()
-
+    browser = visible_browser.run()
+    browser.get("http://google.com")
 
 if __name__ == "__main__":
     main()
