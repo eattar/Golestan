@@ -15,11 +15,11 @@ import os
 class Browser:
     """ this class makes a browser from Selenium framework. """
 
-    def __init__(self)-> None:
+    def __init__(self) -> None:
         self._webdriver_local_path = os.path.realpath('chromedriver')
         self._options = Options()
     
-    def webdriver_setup(self, new_path=None, headless=None, start_maximize=None)-> None:
+    def webdriver_setup(self, new_path=None, headless=None, start_maximize=None) -> None:
         if new_path:
             self._webdriver_local_path = new_path
         if headless:
