@@ -15,28 +15,26 @@ import os
 class Browser:
     """ this class makes a browser from Selenium framework. """
 
-    def __init__(self):
-        self.webdriver_path = os.path.realpath('chromedriver')
-        self.options = Options()
-
-    def setup_browser(self, new_path=None, headless=None, start_maximize=None):
-
+    def __init__(self)-> None:
+        self._webdriver_local_path = os.path.realpath('chromedriver')
+        self._options = Options()
+    
+    def webdriver_setup(self, new_path=None, headless=None, start_maximize=None)-> None:
         if new_path:
-            self.webdriver_path = new_path
-
+            self._webdriver_local_path = new_path
         if headless:
-            self.options.add_argument('--headless')
-
+            self._options.add_argument('--headless')
         if start_maximize:
-            self.options.add_argument("--start-maximized")
-
-    def run(self):
-        return webdriver.Chrome(self.webdriver_path, options=self.options)
+            self._options.add_argument("--start-maximized")
+       
+    def webdriver_run(self):
+        return webdriver.Chrome(self._webdriver_local_path, options=self._options)
 
 
 def main():
     visible_browser = Browser()
-    browser = visible_browser.run()
+    visible_browser.webdriver_setup(headless=False, start_maximize=True)
+    browser = visible_browser.webdriver_run()
     browser.get("http://google.com")
 
 if __name__ == "__main__":
