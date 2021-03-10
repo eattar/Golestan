@@ -42,7 +42,7 @@ class Browser:
         wait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, 'imgCaptcha'))) 
         return self.driver.find_element_by_id('imgCaptcha')
 
-    def go_to_mainFrame(self) -> None:
+    def go_to_captcha_frame(self) -> None:
         """ Some elements are within inner frames and we have to switch to their frames. """
         self.driver.switch_to.default_content()
         self.driver.switch_to.frame('Faci1')
@@ -69,5 +69,5 @@ class Browser:
 
 b = Browser()
 b.get_url()
-b.go_to_mainFrame()
+b.go_to_captcha_frame()
 b.captcha_screenshot()
