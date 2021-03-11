@@ -34,22 +34,21 @@ class Browser:
     def get_url(self):
         self.driver.get("https://golestan.du.ac.ir/forms/authenticateuser/main.htm")
     
-    @property
     def captcha_element(self) -> WebElement:
         """ Driver must WAIT for this element to be clickable.
          Despite item is availble, it is not visible for taking a screenshot. """
 
-        wait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, 'imgCaptcha'))) 
-        return self.driver.find_element_by_id('imgCaptcha')
-
+        wait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="imgCaptcha"]'))) 
+        return self.driver.find_element_by_css_selector('#imgCaptcha')
+        
     def go_to_captcha_frame(self) -> None:
         """ Some elements are within inner frames and we have to switch to their frames. """
         self.driver.switch_to.default_content()
         self.driver.switch_to.frame('Faci1')
         self.driver.switch_to.frame('Master')
         self.driver.switch_to.frame('Form_Body')       
-
-    def element_screenshot(self, element:WebElement) -> None:
+        
+    def element_screenshot(self, element:WebElement, file_name:str) -> None:
         location = element.location
         size = element.size
         page_screenshot = self.driver.get_screenshot_as_png()
@@ -61,13 +60,43 @@ class Browser:
         lower = int(location['y'] + 2*size['height'])
 
         image = image.crop((left, upper, right, lower))
-        image.save('captcha.png')
+        image.save(f'{file_name}')
 
     def captcha_screenshot(self):
-        self.element_screenshot(self.captcha_element)
+        self.element_screenshot(self.captcha_element(), 'captcha.png')
+
+    def enter_login_captcha(self):
+        captcha = str(input("Enter: "))
+        captcha_field = self.driver.find_element_by_id('F51701')
+        captcha_field.clear()
+        captcha_field.click()
+        captcha_field.send_keys(captcha)
+
+    def enter_username_password(self):
+        user_field = self.driver.find_element_by_xpath('//*[@id="F80351"]')
+        password_field = self.driver.find_element_by_xpath('//*[@id="F80401"]')
+        username = '94432027'
+        password = 'a123456@'
+        user_field.clear()
+        password_field.clear()
+        user_field.send_keys(username)
+        password_field.send_keys(password)
+    
+    def submit_entries(self):
+        self.driver.find_element_by_xpath('//*[@id="btnLog"]').click()
+
+    def go_to_menu(self):
+        wait(self.driver, 10).until(EC.presence_of_element_located((By.ID, 'F20851')))
+        input_field = self.driver.find_element_by_xpath('//*[@id="F20851"]')
+        input_field.send_keys(str(input("Enter Menu: ")))
+        self.driver.find_element_by_xpath('//*[@id="OK"]').click()
 
 
-b = Browser()
+b = Browser(headless=False)
 b.get_url()
 b.go_to_captcha_frame()
 b.captcha_screenshot()
+b.enter_login_captcha()
+b.enter_username_password()
+b.submit_entries()
+b.go_to_menu()
