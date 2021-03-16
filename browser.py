@@ -42,10 +42,10 @@ class Browser:
         wait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="imgCaptcha"]'))) 
         return self.driver.find_element_by_css_selector('#imgCaptcha')
         
-    def go_to_frame(self, *frame_names:str) -> None:
+    def go_to_frame(self, *frames:str) -> None:
         """ Some elements are within inner frames and we have to switch to their frames. """
         self.driver.switch_to.default_content()
-        for frame in frame_names:
+        for frame in frames:
             self.driver.switch_to.frame(frame)
 
     def element_screenshot(self, element:WebElement, file_name:str) -> None:
