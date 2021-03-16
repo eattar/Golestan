@@ -1,4 +1,4 @@
-from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException, NoSuchFrameException
+from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException, NoSuchFrameException, NoSuchWindowException
 from browser import Browser
 
 browser = Browser(headless=False)
@@ -8,24 +8,20 @@ browser = Browser(headless=False)
 def login():
     browser.get_url()
     browser.captcha()
-    browser.enter_username_password('981313141032', 'mo1112')
-    browser.submit_entries()
+    browser.enter_username_password('98131314103', 'mo1112')
     while True:
         try:
-            browser.go_to_frame('Faci1', 'Message')
+            browser.submit_entries()
+            browser.go_to_login_error_frame()
             browser.check_error()
-            try:
-                browser.submit_entries()
-            except NoSuchFrameException:
-                break
-        except ElementNotInteractableException:
+        except(NoSuchFrameException, NoSuchWindowException, ElementNotInteractableException):
             break
+
 
 def main():
 
     login()
-
-
+    browser.go_to_menu()
 
 if __name__ == "__main__":
     main()
