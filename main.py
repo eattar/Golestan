@@ -6,6 +6,7 @@ browser = Browser()
 
 
 def login():
+
     browser.get_url()
     browser.captcha()
     browser.enter_username_password('98131314103', 'mo1112')
@@ -19,9 +20,9 @@ def login():
 
 
 def main():
-
-    login()
-    browser.go_to_menu()
+    pass
+    # login()
+    # browser.go_to_menu()
 
 if __name__ == "__main__":
     main()

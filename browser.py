@@ -146,7 +146,7 @@ class Browser:
         
         self.go_to_frame('Faci3', 'Commander')
         show_report_button = self.driver.find_element_by_id('IM16_ViewRep')
-        show_report_button.click()
+        ActionChains(self.driver).move_to_element(show_report_button).click().perform()
      
         self.go_to_frame('Faci3', 'Master', 'Header', 'Form_Body')
         week_table = self.driver.find_element_by_xpath('//*[@id="DIVVarRem_2"]/table')
