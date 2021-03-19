@@ -135,14 +135,7 @@ class Browser:
         self.enter_captcha()
 
     def go_to_menu(self):
-        # ok_button = self.driver.find_element_by_id('OK')
-        # while True:
-        #     try:
-        #         self.go_to_frame('Faci2', 'Master', 'Form_Body')
-        #         break
-        #     except:
-        #         NoSuchFrameException or ElementNotInteractableException
-        #         continue
+       
         self.go_to_frame('Faci2', 'Master', 'Form_Body')
         input_field = self.driver.find_element_by_xpath('//*[@id="F20851"]')
         input_field.clear()
@@ -158,15 +151,6 @@ class Browser:
         self.go_to_frame('Faci3', 'Master', 'Header', 'Form_Body')
         week_table = self.driver.find_element_by_xpath('//*[@id="DIVVarRem_2"]/table')
         self.element_screenshot(week_table, 'week.png')
-
-        # original_window = self.driver.window_handles[0]
-        # self.go_to_frame('Faci3', 'Commander')
-        # print_window = self.driver.find_element_by_id('PreparePrint').click()
-        # print_window = self.driver.window_handles[1]
-        # # self.driver.switch_to.window(print_window)
-        # week_table = self.driver.find_element_by_css_selector('#DIVVarRem_2 > table')
-        # self.element_screenshot(week_table, 'week.png')
-        
 
     def frame_availability(self, frame:str):
         self.driver.switch_to.default_content()
