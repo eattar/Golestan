@@ -1,7 +1,7 @@
 from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException, NoSuchFrameException, NoSuchWindowException
 from browser import Browser
 
-browser = Browser(headless=False)
+browser = Browser()
 
 
 

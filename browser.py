@@ -7,6 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchWindowException, RemoteDriverServerException, TimeoutException
 from selenium.common.exceptions import NoSuchFrameException, NoSuchElementException, ElementNotInteractableException
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
 from PIL import Image
 from io import BytesIO
 import os
@@ -29,12 +30,13 @@ class Browser:
             self._options.add_argument('--headless')
         if start_maximized:
             self._options.add_argument("--start-maximized")
-        
+            self._options.add_argument("window-size=1400,1050")
+
         self.driver = webdriver.Chrome(self._webdriver_local_path, options=self._options)
 
     def get_url(self):
         self.driver.get("https://ems.atu.ac.ir/forms/authenticateuser/main.htm")
-    
+
     def captcha_element(self) -> WebElement:
         """ Driver must WAIT for this element to be clickable.
          Despite item is availble, it is not visible for taking a screenshot. """
@@ -44,6 +46,7 @@ class Browser:
         
     def go_to_frame(self, *frames:str) -> None:
         """ Some elements are within inner frames and we have to switch to their frames. """
+        self.driver.switch_to.default_content()
         while True:
             try:
                 for frame in frames:
@@ -60,20 +63,29 @@ class Browser:
         image = Image.open(BytesIO(page_screenshot))
         
         left = int(location['x'])
+        upper = int(location['y'] + 71)
+        right = int(location['x'] + size['width'])
+        lower = int(upper + size['height'])
+
+        image = image.crop((left, upper, right, lower))
+        image.save(f'{file_name}')
+
+    def captcha_element_screenshot(self, element:WebElement, file_name:str) -> None:
+        location = element.location
+        size = element.size
+        page_screenshot = self.driver.get_screenshot_as_png()
+        image = Image.open(BytesIO(page_screenshot))
+        
+        left = int(location['x'])
         upper = int(location['y'] + size['height'])
         right = int(location['x'] + size['width'])
         lower = int(location['y'] + 2*size['height'])
-        
-        # left = int(location['x'])
-        # upper = int(location['y'])
-        # right = int(location['x'] + size['width'])
-        # lower = int(location['y'] + size['height'])
 
         image = image.crop((left, upper, right, lower))
         image.save(f'{file_name}')
 
     def captcha_screenshot(self):
-        self.element_screenshot(self.captcha_element(), 'captcha.png')
+        self.captcha_element_screenshot(self.captcha_element(), 'captcha.png')
 
     def enter_captcha(self):
         captcha = str(input("Enter Captcha: "))
@@ -132,21 +144,29 @@ class Browser:
         #         NoSuchFrameException or ElementNotInteractableException
         #         continue
         self.go_to_frame('Faci2', 'Master', 'Form_Body')
-        
         input_field = self.driver.find_element_by_xpath('//*[@id="F20851"]')
+        input_field.clear()
         input_field.send_keys(str(input("Enter Menu: ")))
         ok_button = self.driver.find_element_by_id('OK')
+        self.driver.execute_script("arguments[0].scrollIntoView();", ok_button)
         ok_button.click()
         
-        
         self.go_to_frame('Faci3', 'Commander')
-        
         show_report_button = self.driver.find_element_by_id('IM16_ViewRep')
         show_report_button.click()
      
         self.go_to_frame('Faci3', 'Master', 'Header', 'Form_Body')
         week_table = self.driver.find_element_by_xpath('//*[@id="DIVVarRem_2"]/table')
         self.element_screenshot(week_table, 'week.png')
+
+        # original_window = self.driver.window_handles[0]
+        # self.go_to_frame('Faci3', 'Commander')
+        # print_window = self.driver.find_element_by_id('PreparePrint').click()
+        # print_window = self.driver.window_handles[1]
+        # # self.driver.switch_to.window(print_window)
+        # week_table = self.driver.find_element_by_css_selector('#DIVVarRem_2 > table')
+        # self.element_screenshot(week_table, 'week.png')
+        
 
     def frame_availability(self, frame:str):
         self.driver.switch_to.default_content()
