@@ -21,8 +21,8 @@ def login():
 
 def main():
     pass
-    # login()
-    # browser.go_to_menu()
+    login()
+    browser.go_to_menu()
 
 if __name__ == "__main__":
     main()
