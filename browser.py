@@ -54,6 +54,7 @@ class Browser:
                 break
             except NoSuchFrameException or NoSuchWindowException:
                 self.driver.switch_to.default_content()
+                self.driver.implicitly_wait(1)
                 continue
     
     def element_screenshot(self, element:WebElement, file_name:str) -> None:
