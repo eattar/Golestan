@@ -143,7 +143,7 @@ class Browser:
         # input_field.send_keys(str(input("Enter Menu: ")))
         input_field.send_keys('78')
         ok_button = self.driver.find_element_by_id('OK')
-        wait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, 'OK')))
+        # wait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, 'OK')))
         ok_button.click()
         
         self.go_to_frame('Faci3', 'Commander')
