@@ -9,7 +9,7 @@ def login():
 
     browser.get_url()
     browser.captcha()
-    browser.enter_username_password('98131314103', 'mo1112')
+    browser.enter_username_password('', '')
     while True:
         try:
             browser.submit_entries()
@@ -20,7 +20,7 @@ def login():
 
 
 def main():
-    pass
+    
     login()
     browser.go_to_menu()
 

@@ -124,7 +124,7 @@ class Browser:
             self.captcha()
         if error_message == "کد1 : شناسه کاربري يا گذرواژه اشتباه است.":
             print(error_message)
-            self.enter_username_password('98131314103', 'mo1112')
+            self.enter_username_password('', '')
             self.captcha()
 
         if error_message == "لطفا صبر کنيد.":
