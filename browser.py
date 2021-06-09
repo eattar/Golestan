@@ -124,7 +124,7 @@ class Browser:
             self.captcha()
         if error_message == "کد1 : شناسه کاربري يا گذرواژه اشتباه است.":
             print(error_message)
-            self.enter_username_password('', '')
+            self.enter_username_password('98131314103', 'mo1112')
             self.captcha()
 
         if error_message == "لطفا صبر کنيد.":
@@ -142,9 +142,11 @@ class Browser:
         input_field.clear()
         # input_field.send_keys(str(input("Enter Menu: ")))
         input_field.send_keys('78')
-        ok_button = self.driver.find_element_by_id('OK')
+        input_field.send_keys(Keys.ENTER)
+        self.driver.find_element_by_id('F21061').send_keys(Keys.ENTER)
+        # ok_button = self.driver.find_element_by_id('OK')
         # wait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, 'OK')))
-        ok_button.click()
+        # ok_button.click()
         
         self.go_to_frame('Faci3', 'Commander')
         wait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, 'IM16_ViewRep')))
