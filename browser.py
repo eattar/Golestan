@@ -1,3 +1,4 @@
+from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.remote.webelement import WebElement
@@ -41,13 +42,15 @@ class Browser:
         """ Driver must WAIT for this element to be clickable.
          Despite item is availble, it is not visible for taking a screenshot. """
         self.go_to_login_frame()
-        wait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="imgCaptcha"]'))) 
+        wait(self.driver, 20).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="imgCaptcha"]'))) 
         return self.driver.find_element_by_css_selector('#imgCaptcha')
         
     def go_to_frame(self, *frames:str) -> None:
         """ Some elements are within inner frames and we have to switch to their frames. """
         self.driver.switch_to.default_content()
-        while True:
+        counter = 0 
+        while counter <10:
+            
             try:
                 for frame in frames:
                     self.driver.switch_to.frame(frame)
@@ -55,8 +58,11 @@ class Browser:
             except NoSuchFrameException or NoSuchWindowException:
                 self.driver.switch_to.default_content()
                 self.driver.implicitly_wait(1)
+                counter += 1
                 continue
-    
+        self.driver.save_screenshot('sc.png')
+        print(counter)
+
     def element_screenshot(self, element:WebElement, file_name:str) -> None:
         location = element.location
         size = element.size
@@ -138,15 +144,18 @@ class Browser:
     def go_to_menu(self):
        
         self.go_to_frame('Faci2', 'Master', 'Form_Body')
+        wait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="F20851"]')))
         input_field = self.driver.find_element_by_xpath('//*[@id="F20851"]')
         input_field.clear()
-        # input_field.send_keys(str(input("Enter Menu: ")))
+        input_field.click()
         input_field.send_keys('78')
-        input_field.send_keys(Keys.ENTER)
-        self.driver.find_element_by_id('F21061').send_keys(Keys.ENTER)
-        # ok_button = self.driver.find_element_by_id('OK')
-        # wait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, 'OK')))
-        # ok_button.click()
+        wait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="OK"]')))
+        ok_buttun = self.driver.find_element_by_xpath('//*[@id="OK"]')
+        sleep(2)
+        ok_buttun.click()
+        
+
+
         
         self.go_to_frame('Faci3', 'Commander')
         wait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, 'IM16_ViewRep')))
