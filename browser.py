@@ -34,6 +34,7 @@ class Browser:
             self._options.add_argument("window-size=1400,1050")
 
         self.driver = webdriver.Chrome(self._webdriver_local_path, options=self._options)
+        self.menu_number = ""
 
     def get_url(self):
         self.driver.get("https://ems.atu.ac.ir/forms/authenticateuser/main.htm")
@@ -118,7 +119,7 @@ class Browser:
         user_field.send_keys(username)
         password_field.send_keys(password)
     
-    def submit_entries(self):
+    def submit_username_password(self):
         self.go_to_login_frame()
         self.driver.find_element_by_id('btnLog').click()
     
@@ -141,31 +142,37 @@ class Browser:
         self.captcha_screenshot()
         self.enter_captcha()
 
-    def go_to_menu(self):
-       
+    def userInputMenuNumber(self):
+        self.menu_number = str(input('Enter Menu Number: '))
+    
+    def submit_menu_number(self):
+        """ Submitting menu digits were taken by user on the main page """ 
         self.go_to_frame('Faci2', 'Master', 'Form_Body')
         wait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="F20851"]')))
         input_field = self.driver.find_element_by_xpath('//*[@id="F20851"]')
         input_field.clear()
         input_field.click()
-        input_field.send_keys('78')
+        input_field.send_keys(self.menu_number)
         wait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="OK"]')))
         ok_buttun = self.driver.find_element_by_xpath('//*[@id="OK"]')
-        sleep(2)
+        sleep(3)
         ok_buttun.click()
+
+    def go_to_menu(self):
+
+        self.submit_menu_number()
         
+        if self.menu_number == '78':
+            
+            self.go_to_frame('Faci3', 'Commander')
+            wait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, 'IM16_ViewRep')))
+            show_report_button = self.driver.find_element_by_css_selector('#IM16_ViewRep')
+            show_report_button.click()
 
-
-        
-        self.go_to_frame('Faci3', 'Commander')
-        wait(self.driver, 10).until(EC.element_to_be_clickable((By.ID, 'IM16_ViewRep')))
-        show_report_button = self.driver.find_element_by_css_selector('#IM16_ViewRep')
-        show_report_button.click()
-
-        self.go_to_frame('Faci3', 'Master', 'Header', 'Form_Body')
-        wait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="DIVVarRem_2"]/table')))
-        week_table = self.driver.find_element_by_xpath('//*[@id="DIVVarRem_2"]/table')
-        self.element_screenshot(week_table, 'week.png')
+            self.go_to_frame('Faci3', 'Master', 'Header', 'Form_Body')
+            wait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="DIVVarRem_2"]/table')))
+            week_table = self.driver.find_element_by_xpath('//*[@id="DIVVarRem_2"]/table')
+            self.element_screenshot(week_table, 'week.png')
 
     def frame_availability(self, frame:str):
         self.driver.switch_to.default_content()
