@@ -1,9 +1,7 @@
-from selenium.common.exceptions import ElementNotInteractableException, NoSuchElementException, NoSuchFrameException, NoSuchWindowException
+from selenium.common.exceptions import ElementNotInteractableException, NoSuchFrameException, NoSuchWindowException
 from browser import Browser
 
 browser = Browser()
-
-
 
 def login():
 
@@ -17,7 +15,6 @@ def login():
             browser.check_error()
         except(NoSuchFrameException, NoSuchWindowException, ElementNotInteractableException):
             break
-
 
 def main():
     

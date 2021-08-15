@@ -5,16 +5,11 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.ui import WebDriverWait as wait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchWindowException, RemoteDriverServerException, TimeoutException
-from selenium.common.exceptions import NoSuchFrameException, NoSuchElementException, ElementNotInteractableException
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import NoSuchWindowException, TimeoutException
+from selenium.common.exceptions import NoSuchFrameException
 from PIL import Image
 from io import BytesIO
 import os
-
-from selenium.webdriver.support.wait import WebDriverWait
-
 
 class Browser:
     """ this class makes a browser from Selenium framework. """
@@ -61,8 +56,8 @@ class Browser:
                 self.driver.implicitly_wait(1)
                 counter += 1
                 continue
-        self.driver.save_screenshot('sc.png')
-        print(counter)
+        # self.driver.save_screenshot('sc.png')
+        # print(counter)
 
     def element_screenshot(self, element:WebElement, file_name:str) -> None:
         location = element.location
@@ -146,7 +141,8 @@ class Browser:
         self.menu_number = str(input('Enter Menu Number: '))
     
     def submit_menu_number(self):
-        """ Submitting menu digits were taken by user on the main page """ 
+        """ Submitting menu digits were taken by user on the main page """
+
         self.go_to_frame('Faci2', 'Master', 'Form_Body')
         wait(self.driver, 10).until(EC.element_to_be_clickable((By.XPATH, '//*[@id="F20851"]')))
         input_field = self.driver.find_element_by_xpath('//*[@id="F20851"]')
@@ -200,14 +196,6 @@ class Browser:
                 
             barname_emtehan = self.driver.find_element_by_xpath('//*[@id="DIVTable3"]')
             self.element_screenshot(barname_emtehan, 'barname_emtehan.png')
-
-    def frame_availability(self, frame:str):
-        self.driver.switch_to.default_content()
-        try:
-            self.driver.switch_to.frame(frame)
-            return True
-        except NoSuchFrameException:
-            return False
     
     def go_to_login_error_frame(self):
         self.driver.switch_to.default_content()
