@@ -1,5 +1,20 @@
 {
-    "تهران": 
+    "اردبيل":
+        [
+            {"دانشگاه محقق اردبيلي":"https://golestan.uma.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+     "اصفهان": 
+        [
+            {"دانشگاه اصفهان":"https://golestan.ui.ac.ir/forms/authenticateuser/main.htm"},
+            {"دانشگاه صنعتي اصفهان":"https://golestan.iut.ac.ir/forms/authenticateuser/main.htm"},
+            {"دانشگاه هنر اصفهان":"https://edu.aui.ac.ir/forms/authenticateuser/main.htm"},
+            {"موسسه آموزش عالي راغب اصفهاني":"https://golestan.raghebisf.ac.ir/forms/authenticateuser/main.htm"},
+            {"دانشگاه فني و مهندسي گلپايگان":"https://golestan.gut.ac.ir/forms/authenticateuser/main.htm"},
+            {"مركز آموزش عالي شهرضا":"https://golestan.shahreza.ac.ir/forms/authenticateuser/main.htm"},
+            {"موسسه آموزش عالي غير انتفاعي صنعتي فولاد":"https://golestan.fit.ac.ir:4433/forms/authenticateuser/main.htm"},
+            {"موسسه آموزش عالي فرزانگان":"https://golestan.farzanegan.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "تهران": 
         [
             {"دانشگاه شهيد بهشتي":"https://golestan.sbu.ac.ir/forms/authenticateuser/main.htm"},
             {"دانشگاه خوارزمي":"https://golestan.khu.ac.ir/forms/authenticateuser/main.htm"},
@@ -19,20 +34,100 @@
             {"دانشگاه علم و فرهنگ غير دولتي-غير انتفاعي":"https://edu.usc.ac.ir/Forms/AuthenticateUser/main.htm"},
             {"دانشگاه صداوسيما":"https://golestan.iribu.ac.ir/forms/authenticateuser/main.htm"}
         ],
-     "اصفهان": 
+        "خراسان رضوی":
         [
-            {"دانشگاه اصفهان":"https://golestan.ui.ac.ir/forms/authenticateuser/main.htm"},
-            {"دانشگاه صنعتي اصفهان":"https://golestan.iut.ac.ir/forms/authenticateuser/main.htm"},
-            {"دانشگاه هنر اصفهان":"https://edu.aui.ac.ir/forms/authenticateuser/main.htm"},
-            {"موسسه آموزش عالي راغب اصفهاني":"https://golestan.raghebisf.ac.ir/forms/authenticateuser/main.htm"},
-            {"دانشگاه فني و مهندسي گلپايگان":"https://golestan.gut.ac.ir/forms/authenticateuser/main.htm"},
-            {"مركز آموزش عالي شهرضا":"https://golestan.shahreza.ac.ir/forms/authenticateuser/main.htm"},
-            {"موسسه آموزش عالي غير انتفاعي صنعتي فولاد":"https://golestan.fit.ac.ir:4433/forms/authenticateuser/main.htm"},
-            {"موسسه آموزش عالي فرزانگان":"https://golestan.farzanegan.ac.ir/forms/authenticateuser/main.htm"}
+            {"دانشگاه صنعتي قوچان":"https://golestan.qiet.ac.ir/Forms/AuthenticateUser/main.htm"}
         ],
-        "اردبيل":
+        "خراسان شمالی":
         [
-            {"دانشگاه محقق اردبيلي":"https://golestan.uma.ac.ir/forms/authenticateuser/main.htm"}
+            {"دانشگاه بجنورد":"https://golestan.ub.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "خوزستان":
+        [
+            {"دانشگاه صنعتي جندي شاپور":"https://golestan.jsu.ac.ir/forms/authenticateuser/main.htm"},
+            {"دانشگاه صنعت نفت":"https://edu.put.ac.ir/Forms/AuthenticateUser/main.htm"}
+        ],
+        "زنجان":
+        [
+            {"دانشگاه زنجان":"https://golestan.znu.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "سمنان":
+        [
+            {"دانشگاه صنعتي شاهرود":"https://golestan.shahroodut.ac.ir/forms/authenticateuser/main.htm"},
+            {"دانشگاه دامغان":"https://golestan.du.ac.ir/forms/authenticateuser/main.htm"},
+            {"دانشكده فني و مهندسي گرمسار":"https://golestan.fmgarmsar.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "سیستان و بلوچستان":
+        [
+            {"دانشگاه دريانوردي و علوم دريايي چابهار":"https://golestan.cmu.ac.ir/forms/authenticateuser/main.htm"},
+            {"مجتمع آموزش عالي سراوان":"https://golestan.saravan.ac.ir/forms/authenticateuser/main.htm"},
+            {"دانشگاه ولايت":"https://golestan.velayat.ac.ir/Forms/AuthenticateUser/main.htm"}
+        ],
+        "فارس":
+        [
+            {"دانشگاه صنعتي شيراز":"https://golestan.sutech.ac.ir/Forms/AuthenticateUser/main.htm"}
+        ],
+        "قزوین":
+        [
+            {"موسسه آموزش عالي كار(غيردولتي-غيرانتفاعي)":"https://79.175.156.50/forms/authenticateuser/main.htm"}
+        ],
+        "قم":
+        [
+            {"دانشگاه علوم و معارف قرآن كريم":"https://golestan.quran.ac.ir/Forms/AuthenticateUser/main.htm"},
+            {"دانشگاه معارف اسلامي":"https://edu.maaref.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "كردستان":
+        [
+            {"دانشگاه كردستان":"https://golestan.uok.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "کرمان":
+        [
+            {"دانشگاه جيرفت":"https://edu.ujiroft.ac.ir/forms/authenticateuser/main.htm"},
+            {"مجتمع آموزش عالي بم":"http://www.edu.bam.ac.ir/Forms/AuthenticateUser/main.htm"},
+            {"دانشگاه تحصيلات تكميلي صنعتي و فناوري پيشرفته":"https://golestan.kgut.ac.ir/forms/authenticateuser/main.htm"},
+            {"دانشگاه ولي عصر (عج) رفسنجان":"https://golestan.vru.ac.ir/Forms/AuthenticateUser/main.htm"},
+            {"مجتمع آموزش عالي زرند":"https://edu.zarand.ac.ir/forms/authenticateuser/main.htm"},
+            {"موسسه آموزش عالي جاويد جيرفت":"https://edu.javid.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "کرمانشاه":
+        [
+            {"دانشگاه رازي":"https://golestan.razi.ac.ir/Forms/AuthenticateUser/main.htm"}
+        ],
+        "کهگیلویه و بویراحمد":
+        [
+            {"دانشگاه ياسوج":"https://golestan.yu.ac.ir:4433/forms/authenticateuser/main.htm"}
+        ],
+        "لرستان":
+        [
+            {"دانشگاه آيت ا.. العظمي بروجردي":"https://golestan.abru.ac.ir/forms/authenticateuser/main.htm"},
+            {"دانشگاه لرستان":"https://golestan.lu.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "مازندران":
+        [
+            {"دانشگاه مازندران":"https://golestan.umz.ac.ir/forms/authenticateuser/main.htm"},
+            {"دانشگاه صنعتي نوشيرواني بابل":"https://golestan.nit.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "مرکزی":
+        [
+            {"دانشگاه اراک":"https://golestan.araku.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "هرمزگان":
+        [
+            {"دانشگاه هرمزگان":"https://golestan.hormozgan.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "همدان":
+        [
+            {"دانشگاه بوعلي سينا":"https://golestan.basu.ac.ir/Forms/AuthenticateUser/main.htm"},
+            {"دانشگاه صنعتي همدان":"https://golestan.hut.ac.ir/forms/authenticateuser/main.htm"}
+        ],
+        "یزد":
+        [
+            {"دانشگاه یزد":"https://golestan.yazd.ac.ir/forms/authenticateuser/main.htm"},
+            {"موسسه آموزش عالي غير دولتي- غير انتفاعي امام جواد(ع)":"https://golestan.iju.ir/forms/authenticateuser/main.htm"}
+        ],
+        "سراسر ایران":
+        [
+            {"دانشگاه پيام نور":"https://osreg.pnu.ac.ir/forms/authenticateuser/main.htm"}
         ]
     
         
