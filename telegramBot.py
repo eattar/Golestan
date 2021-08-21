@@ -15,7 +15,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 start_reply_markup = None
-go_back_emoji = "↪بازگشت"
+go_back_emoji = "بازگشت ↪"
 with open(os.path.realpath('unis.json')) as f:
     uniList = json.load(f)
 
