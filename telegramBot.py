@@ -1,6 +1,7 @@
 import logging
 import os
 import json
+from typing import ContextManager
 import numpy as np
 from dotenv import load_dotenv
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup, Update
@@ -17,14 +18,29 @@ logger = logging.getLogger(__name__)
 start_reply_markup = None
 go_back_emoji = "بازگشت ↪"
 with open(os.path.realpath('unis.json')) as f:
-    uniList = json.load(f)
+    uni_json_list = json.load(f)
+
+
+def uni_generator():
+    for key, value in uni_json_list.items():
+        for uni in value:
+            yield uni
 
 
 def start(update: Update, context: CallbackContext) -> None:
-    start_menu = [
+    if user == new:
+        start_menu = [
+            [
+                InlineKeyboardButton("ورود به سامانه گلستان", callback_data='login'),
+                InlineKeyboardButton("تنظیمات", callback_data='setting'),
+            ],
+        ]
+
+    else:
+        start_menu = [
         [
             InlineKeyboardButton("راهنما", callback_data='guide'),
-            InlineKeyboardButton("شروع", callback_data='run'),
+            InlineKeyboardButton("انتخاب دانشگاه", callback_data='choose_uni'),
         ],
     ]
     global start_reply_markup
@@ -40,28 +56,28 @@ def button(update: Update, context: CallbackContext) -> None:
     query.answer()
 
     province_menu = [
-        [InlineKeyboardButton("{}".format(list(uniList.keys())[i]),
-                              callback_data="{}".format(list(uniList.keys())[i])) for i in range(len(uniList.keys()))]
+        [InlineKeyboardButton("{}".format(list(uni_json_list.keys())[i]),
+                              callback_data="{}".format(list(uni_json_list.keys())[i])) for i in range(len(uni_json_list.keys()))]
     ]
+
     reshaped_province_menu = reshape_menu(province_menu)
     reshaped_province_menu.append([InlineKeyboardButton(go_back_emoji, callback_data="province_menu_back")])
     province_reply_markup = InlineKeyboardMarkup(reshaped_province_menu)
 
-    if query.data == 'run':
+    # Start Inlinekeyboard -> CHOOSE PROVINCE
+    if query.data == 'choose_uni':
         query.edit_message_text(text="انتخاب استان 🇮🇷", reply_markup=province_reply_markup)
+    # Choose Province BACK Inlinekeyboard -> Start
     if query.data == 'province_menu_back':
-        # update.message.message_id
         query.edit_message_text("به سامانه گلستان خوش آمدید!\nبرای ادامه بر روی دگمه شروع بزنید.",
                                 reply_markup=start_reply_markup)
-    if query.data == 'uni_menu_back':
-        query.edit_message_text(text="انتخاب استان 🇮🇷", reply_markup=province_reply_markup)
-
-    for value in list(uniList.keys()):
-        if query.data == value:
+    # Province Inlinekeyboard -> CHOOSE UNI
+    for city in list(uni_json_list.keys()):
+        if query.data == city:
             uni_menu = [
-                [InlineKeyboardButton("{}".format(list(uniList.get(value)[i])[0]),
-                                      callback_data="{}".format(list(uniList.get(value)[i])[0][8:28])) for i in
-                 range(0, len(list(uniList.get(value))))]
+                [InlineKeyboardButton("{}".format(list(uni_json_list.get(city)[i])[0]),
+                                      callback_data="{}".format(list(uni_json_list.get(city)[i])[0][:28])) for i in
+                 range(0, len(list(uni_json_list.get(city))))]
             ]
             reshaped_uni_menu = reshape_menu(uni_menu)
             reshaped_uni_menu.append([InlineKeyboardButton(go_back_emoji, callback_data="uni_menu_back")])
@@ -69,8 +85,35 @@ def button(update: Update, context: CallbackContext) -> None:
             query.edit_message_text("انتخاب دانشگاه 🏫", reply_markup=uni_reply_markup)
             break
 
+    uni_name_list = uni_generator()
+    for uni in uni_name_list:
+        for uni_name, link in uni.items():
+            if query.data == uni_name[0:28]:
+                query.bot.send_message(chat_id=query.message.chat_id, text='نام دانشگاه ذخیره شد.', )
+                # Save uni_name to the database
+                break
+
+    # context.bot.send_message(chat_id=update.message.chat_id, text='نام کاربری خود در سامانه گلستان را وارد کنید:')
+    # print(update.message.text)
+    # Save username to the database
+    # query.edit_message_text('نام کاربری خود در سامانه گلستان را وارد کنید:')
+
+    # Choose Uni BACK Inlinekeyboard -> Province
+    if query.data == 'uni_menu_back':
+        query.edit_message_text(text="انتخاب استان 🇮🇷", reply_markup=province_reply_markup)
+
+
+def user_input_username_password(update: Update, context: CallbackContext) -> None:
+
+    # context.bot.send_message(chat_id=update.message.from_user, text="نام کاربری خود در سامانه گلستان را وارد کنید.")
+    # Save username in database
+    update.message.reply_text(text="کلمه عبور خود در سامانه گلستان را وارد کنید.")
+    # Save password in database
+    # new_Start_menu()
+
 
 def reshape_menu(button_list: list) -> list:
+    """Reshapes the InlineKeyboardButton matrix into a two dimensional matrix using Numpy library. """
     if len(button_list[0]) < 3:
         return button_list
     elif len(button_list[0]) % 2 != 0:
@@ -90,8 +133,8 @@ def main() -> None:
     updater = Updater(API_KEY)
 
     updater.dispatcher.add_handler(CommandHandler('start', start))
-    updater.dispatcher.add_handler(CallbackQueryHandler(button))
     updater.dispatcher.add_handler(CommandHandler('help', help_command))
+    updater.dispatcher.add_handler(CallbackQueryHandler(button))
 
     # Start the Bot
     updater.start_polling()
