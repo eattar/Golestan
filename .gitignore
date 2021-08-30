@@ -2,6 +2,7 @@ Golestan/
 .vscode/
 .idea/
 .env
+__pychache__
 captcha.png
 sc.png
 Golestan.code-workspace
