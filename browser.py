@@ -1,3 +1,4 @@
+from main import GOLESTAN_PASSWORD, GOLESTAN_USERNAME
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -9,7 +10,12 @@ from selenium.common.exceptions import NoSuchWindowException, TimeoutException
 from selenium.common.exceptions import NoSuchFrameException
 from PIL import Image
 from io import BytesIO
+from dotenv import load_dotenv
 import os
+
+
+USERNAME = os.environ.get('GOLESTAN_USERNAME')
+PASSWORD = os.environ.get('GOLESTAN_PASSWORD')
 
 class Browser:
     """ this class makes a browser from Selenium framework. """
@@ -126,7 +132,7 @@ class Browser:
             self.captcha()
         if error_message == "کد1 : شناسه کاربري يا گذرواژه اشتباه است.":
             print(error_message)
-            self.enter_username_password('98131314103', 'mo1112')
+            self.enter_username_password(GOLESTAN_USERNAME, GOLESTAN_PASSWORD)
             self.captcha()
 
         if error_message == "لطفا صبر کنيد.":
