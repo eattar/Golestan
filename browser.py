@@ -1,4 +1,3 @@
-from main import GOLESTAN_PASSWORD, GOLESTAN_USERNAME
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -10,12 +9,11 @@ from selenium.common.exceptions import NoSuchWindowException, TimeoutException
 from selenium.common.exceptions import NoSuchFrameException
 from PIL import Image
 from io import BytesIO
-from dotenv import load_dotenv
 import os
 
+GOLESTAN_USERNAME = os.environ.get("GOLESTAN_USERNAME")
+GOLESTAN_PASSWORD = os.environ.get("GOLESTAN_PASSWORD")
 
-USERNAME = os.environ.get('GOLESTAN_USERNAME')
-PASSWORD = os.environ.get('GOLESTAN_PASSWORD')
 
 class Browser:
     """ this class makes a browser from Selenium framework. """

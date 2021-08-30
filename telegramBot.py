@@ -102,14 +102,14 @@ def button(update: Update, context: CallbackContext) -> None:
     if query.data == 'uni_menu_back':
         query.edit_message_text(text="انتخاب استان 🇮🇷", reply_markup=province_reply_markup)
 
-
-def user_input_username_password(update: Update, context: CallbackContext) -> None:
-
-    # context.bot.send_message(chat_id=update.message.from_user, text="نام کاربری خود در سامانه گلستان را وارد کنید.")
-    # Save username in database
-    update.message.reply_text(text="کلمه عبور خود در سامانه گلستان را وارد کنید.")
-    # Save password in database
-    # new_Start_menu()
+    if query.data == "login":
+        # print 'please wait' 
+        # show golestan menus
+        golestan_menu = [
+            [InlineKeyboardButton("برنامه هفتگی", callback_data='week_schedule')],
+        ]
+        golestan_reply_markup = InlineKeyboardMarkup(golestan_menu)
+        query.edit_message_text("انتخاب", reply_markup=golestan_reply_markup)
 
 
 def reshape_menu(button_list: list) -> list:

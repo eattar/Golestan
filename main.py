@@ -1,9 +1,7 @@
 from selenium.common.exceptions import ElementNotInteractableException, NoSuchFrameException, NoSuchWindowException
 from browser import Browser
+from browser import GOLESTAN_PASSWORD, GOLESTAN_USERNAME
 import os
-
-GOLESTAN_USERNAME = os.environ.get("GOLESTAN_USERNAME")
-GOLESTAN_PASSWORD = os.environ.get("GOLESTAN_PASSWORD")
 
 browser = Browser(headless=False)
 

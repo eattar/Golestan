@@ -1,2 +1,7 @@
 Golestan/
 .vscode/
+.idea/
+.env
+captcha.png
+sc.png
+Golestan.code-workspace
