@@ -1,109 +1,54 @@
-from selenium.common.exceptions import NoSuchFrameException, NoSuchWindowException, \
-    NoAlertPresentException
+from selenium.common.exceptions import NoAlertPresentException, NoSuchFrameException, NoSuchWindowException, \
+    NoSuchElementException
 from telegram import Update, ForceReply
-from telegram.ext import CallbackQueryHandler, ConversationHandler, MessageHandler, Filters, CommandHandler, Updater, CallbackContext
-from telegramBot import start_menu_new_user, golestan_menu, TelegramBot, KeyboardButton, ReplyKeyboardMarkup, save_credentials, \
-    unis_menu, provinces_menu, uni_generator, uni_json_list
+from telegram.ext import CallbackQueryHandler, ConversationHandler, MessageHandler, Filters, CommandHandler, \
+                          Updater, CallbackContext
+from new_user import start_menu_new_user, NewUser, KeyboardButton, ReplyKeyboardMarkup, \
+                      unis_menu, provinces_menu, uni_generator, uni_json_list, save_to_db
+from registeredUser import golestan_menu, Golestan, login_to_golestan_saved_user, captcha, save_golestan_captcha, \
+    get_uni_page
 import os
-import json
 from dotenv import load_dotenv
 from db import Mongo
+from browser import Browser
 
-USERNAME, PASSWORD, CAPTCHA = range(3)
 Mongo.init()
 load_dotenv()
-telegram = TelegramBot()
-
+browser = Browser(headless=False)
+USERNAME, PASSWORD, CAPTCHA, CAPTCHA_REGISTERED_USER = range(4)
 API_KEY = os.environ.get('API_KEY')
 
-class Golestan:
-    username = None
-    password = None
-    captcha = None
-    telegram_username = None
+
 # Start Command
 def start(update: Update, context: CallbackContext) -> None:
     if Mongo.is_username_in_db(update.message.from_user.username):
         Golestan.telegram_username = update.message.from_user.username
         # keyboard = [[KeyboardButton("/login")], [KeyboardButton("/start")] ]
-        keyboard = [['/start'], ['/login']]
-        markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=False)
-        update.message.reply_text(text="خوش آمدید. بر روی Login بزنید.", reply_markup=markup)
+        keyboard = [['/start'], ['/RUN']]
+        markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=True)
+        update.message.reply_text(text="خوش آمدید. بر روی RUN/ بزنید.", reply_markup=markup)
     else:
         start_menu_new_user(update)
 
 
 def login(update: Update, context: CallbackContext):
+    doc = Mongo.is_username_in_db(update.message.from_user.username)
+    if doc['golestanUsername']:
+        login_saved_credentials(update, context, doc)
+        return CAPTCHA_REGISTERED_USER
 
-    telegram.get_uni_page(update, context)
-    try:
-        alert = telegram.browser.driver.switch_to_alert()
-        alert.accept()
+    else:
+        get_uni_page(update, context)
+        try:
+            alert = browser.driver.switch_to_alert()
+            alert.accept()
 
-        update.message.reply_text('شناسه کاربری:', reply_markup=ForceReply())
-        return USERNAME
+            update.message.reply_text('شناسه کاربری:', reply_markup=ForceReply())
+            return USERNAME
 
-    except NoAlertPresentException:
-        update.message.reply_text('شناسه کاربری:', reply_markup=ForceReply())
-        return USERNAME
-
-
-def enter_user_password():
-    telegram.browser.enter_username_password(Golestan.username, Golestan.password)
-
-def enter_captcha():
-    telegram.browser.enter_captcha(Golestan.captcha)
-
-def save_golestan_username(update: Update, context: CallbackContext) -> int:
-    Golestan.username = update.message.text
-    update.message.reply_text('گذرواژه:', reply_markup=ForceReply())
-    return PASSWORD
-
-
-def save_golestan_password(update: Update, context: CallbackContext) -> int:
-    Golestan.password = update.message.text
-    telegram.captcha(update, context)
-    return CAPTCHA
-
-
-def save_golestan_captcha(update: Update, context: CallbackContext) -> int:
-    Golestan.captcha = update.message.text
-    enter_user_password()
-    enter_captcha()
-    telegram.browser.submit_username_password()
-    try:
-        telegram.browser.go_to_login_error_frame()
-        check_error(update, context)
-    except (NoSuchFrameException, NoSuchWindowException, NoSuchFrameException):
-        pass
-    telegram.browser.go_to_frame('Faci2', 'Master', 'Form_Body')
-    if telegram.browser.driver.find_element_by_id('F51851'):
-        save_credentials(update, context)
-        return ConversationHandler.END
-
-
-def check_error(update: Update, context: CallbackContext):
-
-    error_element = telegram.browser.driver.find_element_by_id('errtxt')
-    error_message = error_element.get_attribute('title')
-    if error_message == "لطفا كد امنيتي را به صورت صحيح وارد نماييد":
-        context.bot.send_message(update.message.chat_id, error_message)
-        return telegram.captcha(update, context)
-
-    if error_message == "کد1 : شناسه کاربري يا گذرواژه اشتباه است.":
-        context.bot.send_message(update.message.chat_id, error_message)
-        keyboard = [['/login']]
-        markup = ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=False)
-        update.message.reply_text(text='بر روی Login بزنید.', reply_markup=markup)
-        return
-
-    if error_message == "لطفا صبر کنيد.":
-        telegram.browser.driver.implicitly_wait(1)
-        check_error(update, context)
-
-
-def cancel(update: Update, context: CallbackContext):
-    pass
+        except NoAlertPresentException:
+            update.message.reply_text('شناسه کاربری:', reply_markup=ForceReply())
+            return USERNAME
 
 
 def button(update: Update, context: CallbackContext) -> None:
@@ -129,29 +74,25 @@ def button(update: Update, context: CallbackContext) -> None:
     for uni in uni_name_list:
         for uni_name, link in uni.items():
             if query.data == uni_name[0:28]:
-                telegram.UNIVERSITY_NAME = uni_name
-                telegram.UNIVERSITY_LINK = link
-                telegram.TELEGRAM_USERNAME = query.from_user.username
+                NewUser.UNIVERSITY_NAME = uni_name
+                NewUser.UNIVERSITY_LINK = link
+                NewUser.TELEGRAM_USERNAME = query.from_user.username
                 query.bot.answer_callback_query(query.id, text='نام دانشگاه ذخیره شد.', show_alert=True,
                                                 cache_time=0)
 
-                telegram.save_to_db()
+                save_to_db()
                 query.bot.send_message(query.message.chat_id, "دوباره استارت کنید")
                 return
-    # USER MENU
-    # if query.data == "login":
-    #     query.bot.send_message(text='اطلاعات کاربری خود در سامانه گلستان را وارد کنید.',
-    #                            chat_id=query.message.chat_id)
-    #     self.username_password(query)
 
     if query.data == "week_schedule":
         query.bot.send_message(query.message.chat_id, "لطفا صبر کنید.")
-        telegram.browser.go_to_menu('78')
+        browser.go_to_menu('78')
         if os.path.isfile('week.png'):
             query.bot.send_photo(chat_id=query.message.chat_id, photo=open('week.png', 'rb'))
         if os.path.isfile('week.txt'):
             with open('week.txt', 'r') as textFile:
                 text = textFile.read()
+            query.bot.send_document(chat_id=query.message.chat_id, document=open('noInfo.png', 'rb'))
             query.bot.send_message(chat_id=query.message.chat_id, text=text)
 
     # if query.data == "golestan_menu_back":
@@ -169,15 +110,50 @@ def button(update: Update, context: CallbackContext) -> None:
     if query.data == "no":
         golestan_menu(query)
 
-conv_handler = ConversationHandler(allow_reentry=True,
-    entry_points=[CommandHandler('login', login)],
-    states={
-        USERNAME: [MessageHandler(Filters.text, save_golestan_username)],
-        PASSWORD: [MessageHandler(Filters.text, save_golestan_password)],
-        CAPTCHA: [MessageHandler(Filters.text, save_golestan_captcha)],
-    },
-    fallbacks=[CommandHandler('cancel', cancel)],
-)
+
+def login_saved_credentials(update: Update, context: CallbackContext, doc):
+    Golestan.username = doc['golestanUsername']
+    Golestan.password = doc['golestanPassword']
+    get_uni_page(update, context)
+    captcha(update, context)
+
+
+def save_golestan_username(update: Update, context: CallbackContext) -> int:
+    Golestan.username = update.message.text
+    update.message.reply_text('گذرواژه:', reply_markup=ForceReply())
+    return PASSWORD
+
+
+def save_golestan_password(update: Update, context: CallbackContext) -> int:
+    Golestan.password = update.message.text
+    captcha(update, context)
+    return CAPTCHA
+
+
+
+def cancel(update: Update, context: CallbackContext):
+    pass
+
+# conv_handler_saved_user = ConversationHandler(allow_reentry=True,
+#                                    entry_points=[CommandHandler('start', start)],
+#                                    states={
+#                                             CAPTCHA_REGISTERED_USER: [MessageHandler(Filters.text, login_to_golestan_saved_user)],
+#                                             }, fallbacks=[CommandHandler('cancel', cancel)],
+#                                    )
+
+conv_handler_new_user = ConversationHandler(allow_reentry=True,
+                                   entry_points=[CommandHandler('RUN', login)],
+                                   states={
+                                            USERNAME: [MessageHandler(Filters.text, save_golestan_username)],
+                                            PASSWORD: [MessageHandler(Filters.text, save_golestan_password)],
+                                            CAPTCHA: [MessageHandler(Filters.text, save_golestan_captcha)],
+                                            CAPTCHA_REGISTERED_USER: [MessageHandler(Filters.text, login_to_golestan_saved_user)]
+                                            }, fallbacks=[CommandHandler('cancel', cancel)],
+                                   )
+
+
+
+
 
 
 
@@ -187,7 +163,8 @@ def main() -> None:
     updater.dispatcher.add_handler(CommandHandler('start', start))
     # updater.dispatcher.add_handler(CommandHandler('help', help_cmd))
     updater.dispatcher.add_handler(CallbackQueryHandler(button))
-    updater.dispatcher.add_handler(conv_handler)
+    updater.dispatcher.add_handler(conv_handler_new_user)
+    # updater.dispatcher.add_handler(conv_handler_saved_user)
 
     # Start the Bot
     updater.start_polling()

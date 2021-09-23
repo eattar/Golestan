@@ -15,22 +15,35 @@ GOLESTAN_USERNAME = os.environ.get("GOLESTAN_USERNAME")
 GOLESTAN_PASSWORD = os.environ.get("GOLESTAN_PASSWORD")
 
 
-class Browser:
+def singleton(class_):
+    instances = {}
+
+    def getinstance(*args, **kwargs):
+        if class_ not in instances:
+            instances[class_] = class_(*args, **kwargs)
+        return instances[class_]
+    return getinstance
+
+
+@singleton
+class Browser(object):
     """ this class makes a browser from Selenium framework. """
 
     def __init__(self, path=None, headless: bool = True, start_maximized: bool = True) -> None:
-        
+
+        self._options = Options()
+        self.menu_number = None
+
         if path:
             self._webdriver_local_path = path
         else:
             self._webdriver_local_path = os.path.realpath('chromedriver')
-        
-        self._options = Options()
+
         if headless:
             self._options.add_argument('--headless')
             self._options.add_argument("--no-sandbox")
             self._options.add_argument("--disable-dev-shm-usage")
-            chrome_prefs = {"profile.managed_default_content_settings.images" : 2}
+            chrome_prefs = {"profile.managed_default_content_settings.images": 2}
             self._options.add_experimental_option("prefs", chrome_prefs)
 
         if start_maximized:
@@ -38,7 +51,6 @@ class Browser:
             self._options.add_argument("window-size=1400,1050")
 
         self.driver = webdriver.Chrome(self._webdriver_local_path, options=self._options)
-        self.menu_number = ""
 
     def get_url(self, link: str):
         self.driver.get(link)
@@ -49,13 +61,13 @@ class Browser:
         self.go_to_login_frame()
         wait(self.driver, 5).until(EC.visibility_of_element_located((By.ID, 'imgCaptcha')))
         return self.driver.find_element_by_css_selector('#imgCaptcha')
-        
+
     def go_to_frame(self, *frames:str) -> None:
         """ Some elements are within inner frames and we have to switch to their frames. """
         self.driver.switch_to.default_content()
-        counter = 0 
+        counter = 0
         while counter < 10:
-            
+
             try:
                 for frame in frames:
                     self.driver.switch_to.frame(frame)
@@ -68,7 +80,7 @@ class Browser:
         # self.driver.save_screenshot('sc.png')
         # print(counter)
 
-    def element_screenshot(self, element:WebElement, file_name:str) -> None:
+    def element_screenshot(self, element: WebElement, file_name: str) -> None:
         location = element.location
         size = element.size
         page_screenshot = self.driver.get_screenshot_as_png()
@@ -82,7 +94,7 @@ class Browser:
         image = image.crop((left, upper, right, lower))
         image.save(f'{file_name}')
 
-    def captcha_element_screenshot(self, element:WebElement, file_name:str) -> None:
+    def captcha_element_screenshot(self, element:WebElement, file_name: str) -> None:
         location = element.location
         size = element.size
         page_screenshot = self.driver.get_screenshot_as_png()
@@ -139,9 +151,9 @@ class Browser:
             self.driver.implicitly_wait(1)
             print(error_message)
 
-    def captcha(self):
+    def captcha(self, captcha):
         self.captcha_screenshot()
-        self.enter_captcha()
+        self.enter_captcha(captcha)
 
     def userInputMenuNumber(self):
         self.menu_number = str(input('Enter Menu Number: '))
@@ -177,10 +189,11 @@ class Browser:
 
             self.go_to_frame('Faci3', 'Master', 'Header', 'Form_Body')
             try:
-                wait(self.driver, 5).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="DIVVarRem_2"]/table')))
+                wait(self.driver, 1).until(EC.visibility_of_element_located((By.XPATH, '//*[@id="DIVVarRem_2"]/table')))
             except (NoSuchElementException, TimeoutException):
                 informationIsNotAvailable = self.driver.find_element_by_xpath('/html/body/table/tbody/tr[1]/td')
                 if informationIsNotAvailable:
+                    self.driver.save_screenshot('noInfo.png')
                     file = open("week.txt", "w")
                     return file.write(informationIsNotAvailable.text)
 

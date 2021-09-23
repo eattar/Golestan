@@ -14,9 +14,10 @@ from browser import NoSuchFrameException, NoSuchWindowException, ElementNotInter
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-GO_BACK_EMOJI = "بازگشت ↪"
 with open(os.path.realpath('unis.json')) as f:
     uni_json_list = json.load(f)
+
+GO_BACK_EMOJI = "بازگشت ↪"
 
 
 def uni_generator():
@@ -26,9 +27,6 @@ def uni_generator():
 
 
 # Commands
-
-
-
 def help_cmd(update: Update, context: CallbackContext) -> None:
     """Displays info on how to use the bot."""
     update.message.reply_text("The text/img for the help will be here.")
@@ -97,15 +95,6 @@ def unis_menu(query, city=None, back=None):
         query.edit_message_text("انتخاب دانشگاه 🏫", reply_markup=uni_menu_markup)
 
 
-def golestan_menu(query):
-    golestan_menu_ = [
-        [InlineKeyboardButton("برنامه هفتگی", callback_data='week_schedule')],
-        [InlineKeyboardButton(GO_BACK_EMOJI, callback_data='golestan_menu_back')],
-    ]
-    golestan_reply_markup = InlineKeyboardMarkup(golestan_menu_)
-    query.edit_message_text(text='انتخاب کنید', reply_markup=golestan_reply_markup)
-
-
 def reshape_menu(button_list: list, column: int):
     """Reshapes the InlineKeyboardButton matrix into an n dimensional matrix using Numpy library. """
     if len(button_list[0]) < 3:
@@ -116,37 +105,27 @@ def reshape_menu(button_list: list, column: int):
     return button_list
 
 
-class TelegramBot:
+class NewUser:
 
     TELEGRAM_USERNAME = ""
     UNIVERSITY_LINK = ""
     UNIVERSITY_NAME = ""
-    browser = Browser()
 
-    def save_to_db(self):
-        Mongo.COL.insert_one({"telegramUsername": "{}".format(self.TELEGRAM_USERNAME),
-                              "uniName": "{}".format(self.UNIVERSITY_NAME),
-                              "uniLink": "{}".format(self.UNIVERSITY_LINK), "golestanUsername": "",
-                              "golestanPassword": ""})
 
-    def login_to_golestan(self, update: Update, context: CallbackContext):
+def save_to_db():
+    Mongo.COL.insert_one({"telegramUsername": "{}".format(NewUser.TELEGRAM_USERNAME),
+                          "uniName": "{}".format(NewUser.UNIVERSITY_NAME),
+                          "uniLink": "{}".format(NewUser.UNIVERSITY_LINK), "golestanUsername": "",
+                          "golestanPassword": ""})
 
-        self.get_uni_page(update, context)
-        self.captcha(update, context)
+# def login_to_golestan(update: Update, context: CallbackContext):
+#
+#     self.get_uni_page(update, context)
+#     self.captcha(update, context)
 
-    def get_uni_page(self, update: Update, context: CallbackContext):
 
-        context.bot.send_message(chat_id=update.message.chat_id, text="لطفا صبر کنید...")
-        username = update.message.from_user.username
-        row = Mongo.COL.find_one({"telegramUsername": username})
-        self.browser.get_url(row['uniLink'])
 
-    def captcha(self, update: Update, context: CallbackContext):
 
-        self.browser.captcha_screenshot()
-        context.bot.send_photo(chat_id=update.message.chat_id, photo=open('captcha.png', 'rb'))
-        context.bot.send_message(update.message.chat_id, text="کپچا را وارد کنید.")
-        context.bot.send_message(update.message.chat_id, text="کپچا:", reply_markup=ForceReply())
 
 
 
@@ -179,24 +158,7 @@ class TelegramBot:
     #                              reply_markup=golestan_menu())
 
 
-def save_credentials(update: Update, context: CallbackContext):
-    kb = [
-        [InlineKeyboardButton("بله", callback_data='yes')],
-        [InlineKeyboardButton("خیر", callback_data='no')],
-    ]
-    kb_markup = InlineKeyboardMarkup(kb)
-    context.bot.send_message(chat_id=update.message.chat_id, text="آيا مایلید اطلاعات کاربری شما برای استفاده آتی ذخیره شود؟",
-                             reply_markup=kb_markup)
 
 
 
-
-
-
-
-
-class Menu(Enum):
-    WEEK_SCHEDULE = 78
-    WEEK_SCHEDULE_ENROLLMENT = 88
-    FINAL_EXAMS = 428
 
