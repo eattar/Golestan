@@ -1,4 +1,3 @@
-from selenium.common.exceptions import NoAlertPresentException
 from telegram import Update, ForceReply, InlineKeyboardButton, InlineKeyboardMarkup, ReplyKeyboardMarkup
 from telegram.ext import CallbackContext, ConversationHandler, CommandHandler, MessageHandler, Filters
 from db import Mongo
@@ -32,6 +31,7 @@ def golestan_menu_saved_user(update: Update, context: CallbackContext):
 
 
 def check_error(update: Update, context: CallbackContext):
+
 
     error_element = browser.driver.find_element_by_id('errtxt')
     error_message = error_element.get_attribute('title')
@@ -85,25 +85,21 @@ def save_credentials_menu(update: Update, context: CallbackContext):
                              text="آيا مایلید اطلاعات کاربری شما برای استفاده آتی ذخیره شود؟",
                              reply_markup=kb_markup)
 
-def save_golestan_captcha(update: Update, context: CallbackContext) -> int:
+
+def save_golestan_captcha(update: Update, context: CallbackContext):
     Golestan.captcha = update.message.text
     enter_user_and_password()
     enter_captcha()
     browser.submit_username_password()
+    browser.driver.implicitly_wait(1)
     try:
         browser.go_to_login_error_frame()
-        check_error(update, context)
+        return check_error(update, context)
     except (NoSuchFrameException, NoSuchWindowException, NoSuchElementException):
         pass
-    browser.go_to_frame('Faci2', 'Master', 'Form_Body')
-    try:
-        wait(browser.driver, 1).until(EC.visibility_of_element_located((By.ID, 'F51851')))
-    except NoSuchElementException:
-        browser.driver.implicitly_wait(1)
-    finally:
-        save_credentials_menu(update, context)
-        return ConversationHandler.END
 
+    save_credentials_menu(update, context)
+    return ConversationHandler.END
 
 
 def login_to_golestan_saved_user(update: Update, context: CallbackContext):
@@ -111,14 +107,18 @@ def login_to_golestan_saved_user(update: Update, context: CallbackContext):
     browser.enter_username_password(Golestan.username, Golestan.password)
     enter_captcha()
     browser.submit_username_password()
+    browser.driver.implicitly_wait(1)
     try:
         browser.go_to_login_error_frame()
-        check_error(update, context)
+        return check_error(update, context)
     except (NoSuchFrameException, NoSuchWindowException, NoSuchElementException):
         pass
+
     golestan_menu_saved_user(update, context)
     return ConversationHandler.END
 
 
-
-
+def back_to_golestan_main_menu():
+    browser.go_to_frame('Faci3', 'Commander')
+    back_to_menu_btn = browser.driver.find_element_by_id('IM90_gomenu')
+    back_to_menu_btn.click()

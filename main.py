@@ -1,3 +1,5 @@
+import sys
+
 from selenium.common.exceptions import NoAlertPresentException, NoSuchFrameException, NoSuchWindowException, \
     NoSuchElementException
 from telegram import Update, ForceReply
@@ -6,7 +8,7 @@ from telegram.ext import CallbackQueryHandler, ConversationHandler, MessageHandl
 from new_user import start_menu_new_user, NewUser, KeyboardButton, ReplyKeyboardMarkup, \
                       unis_menu, provinces_menu, uni_generator, uni_json_list, save_to_db
 from registeredUser import golestan_menu, Golestan, login_to_golestan_saved_user, captcha, save_golestan_captcha, \
-    get_uni_page
+    get_uni_page, back_to_golestan_main_menu
 import os
 from dotenv import load_dotenv
 from db import Mongo
@@ -15,7 +17,8 @@ from browser import Browser
 Mongo.init()
 load_dotenv()
 browser = Browser(headless=False)
-USERNAME, PASSWORD, CAPTCHA, CAPTCHA_REGISTERED_USER = range(4)
+USERNAME, PASSWORD, CAPTCHA = range(3)
+CAPTCHA_REGISTERED_USER = 4
 API_KEY = os.environ.get('API_KEY')
 
 
@@ -94,7 +97,7 @@ def button(update: Update, context: CallbackContext) -> None:
                 text = textFile.read()
             query.bot.send_document(chat_id=query.message.chat_id, document=open('noInfo.png', 'rb'))
             query.bot.send_message(chat_id=query.message.chat_id, text=text)
-
+            back_to_golestan_main_menu()
     # if query.data == "golestan_menu_back":
     #     start_menu(update, back=True)
 
@@ -134,12 +137,13 @@ def save_golestan_password(update: Update, context: CallbackContext) -> int:
 def cancel(update: Update, context: CallbackContext):
     pass
 
+#
 # conv_handler_saved_user = ConversationHandler(allow_reentry=True,
-#                                    entry_points=[CommandHandler('start', start)],
+#                                    entry_points=[CommandHandler('RUN', login)],
 #                                    states={
 #                                             CAPTCHA_REGISTERED_USER: [MessageHandler(Filters.text, login_to_golestan_saved_user)],
 #                                             }, fallbacks=[CommandHandler('cancel', cancel)],
-#                                    )
+#                             )
 
 conv_handler_new_user = ConversationHandler(allow_reentry=True,
                                    entry_points=[CommandHandler('RUN', login)],
@@ -150,11 +154,6 @@ conv_handler_new_user = ConversationHandler(allow_reentry=True,
                                             CAPTCHA_REGISTERED_USER: [MessageHandler(Filters.text, login_to_golestan_saved_user)]
                                             }, fallbacks=[CommandHandler('cancel', cancel)],
                                    )
-
-
-
-
-
 
 
 def main() -> None:

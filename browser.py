@@ -59,7 +59,7 @@ class Browser(object):
         """ Driver must WAIT for this element to be clickable.
          Despite item is available, it is not visible for taking a screenshot. """
         self.go_to_login_frame()
-        wait(self.driver, 5).until(EC.visibility_of_element_located((By.ID, 'imgCaptcha')))
+        wait(self.driver, 5).until(EC.visibility_of_element_located((By.CSS_SELECTOR, '#imgCaptcha')))
         return self.driver.find_element_by_css_selector('#imgCaptcha')
 
     def go_to_frame(self, *frames:str) -> None:
